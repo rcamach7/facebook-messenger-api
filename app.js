@@ -16,6 +16,7 @@ const userRoutes = require("./routes/userRoutes");
 const loginRoute = require("./routes/loginRoute");
 const postsRoutes = require("./routes/postsRoutes");
 const friendsRoutes = require("./routes/friendsRoutes");
+const messagesRoutes = require("./routes/messagesRoutes");
 
 // Initiate our application
 const app = express();
@@ -62,11 +63,9 @@ passport.use(
 
 // Use our user routes to hit endpoints related to users.
 app.use("/users", userRoutes);
-
 app.use("/posts", postsRoutes);
-
+app.use("/messages", messagesRoutes);
 app.use("/friends", friendsRoutes);
-
 app.use("/login", loginRoute);
 
 app.get("/", (req, res, next) => {

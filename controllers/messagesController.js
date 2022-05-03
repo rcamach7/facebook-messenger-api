@@ -41,10 +41,11 @@ exports.sendMessage = [
     // Sent emit for our client
     req.app
       .get("socketio")
+      // This represents the room socket ID, which we generated and assigned manually when we created a new friend.
       .sockets.in(`${req.body._id}`)
       .emit("chat message", newMessage);
 
     // End response with new message
-    res.json({ message: this.locals.message });
+    return res.json({ message: this.locals.message });
   },
 ];

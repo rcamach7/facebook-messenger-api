@@ -7,7 +7,7 @@ exports.acceptFriendRequest = [
   // Verify token exists - if so, pull and save user id in res.locals.userId for next middleware.
   middleware.verifyTokenAndStoreCredentials,
   // Needs to first remove the pending request from the current user, and the "sent" request from the original user as well.
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const friendshipId = v4();
 
@@ -77,11 +77,24 @@ exports.acceptFriendRequest = [
           },
         });
 
-      return res.json({ message: "Friend request accepted!", user });
+      // Save up to date user and move on.
+      res.locals.user = user;
+      next();
     } catch (error) {
       console.log(error);
       return res.status(400).json({ message: "Error", error });
     }
+  },
+  // Handle emits for our messenger application, in case anyone is connected.
+  (req, res) => {
+    // Emit to our messenger app if users are connected.
+    req.app.get("socketio").emit("friend activity");
+
+    // End response with up to date user.
+    return res.json({
+      message: "Friend request accepted!",
+      user: this.locals.user,
+    });
   },
 ];
 
@@ -109,7 +122,7 @@ exports.requestFriend = [
     }
   },
   // Request is valid - so process friend request.
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       // Update user to reflect sent request
       const user = await User.findOneAndUpdate(
@@ -150,10 +163,19 @@ exports.requestFriend = [
         { $push: { receivedFriendRequests: { _id: res.locals.userId } } }
       );
 
-      return res.json({ message: "Friend request sent", user });
+      // Save up to date user and move on.
+      res.locals.user = user;
+      next();
     } catch (error) {
       console.log(error);
       return res.json({ message: "Error processing request" });
     }
+  },
+  // Handle emits for our messenger application, in case anyone is connected.
+  (res, res) => {
+    // Emit to our messenger app if users are connected.
+    req.app.get("socketio").emit("friend activity");
+    // End response with up to date user information.
+    return res.json({ message: "Friend request sent", user: res.locals.user });
   },
 ];

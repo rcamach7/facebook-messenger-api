@@ -5,6 +5,6 @@ const friendsController = require("../controllers/friendsController");
 router.post("/:id", friendsController.acceptFriendRequest);
 
 // Send a friend request
-router.put("/:id", friendsController.requestFriend);
+router.put("/:username", friendsController.requestFriend);
 
 module.exports = router;

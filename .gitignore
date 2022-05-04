@@ -5,4 +5,4 @@
 # Files not needed
 .vscode
 .env
-.DS_STORE
+.DS_Store

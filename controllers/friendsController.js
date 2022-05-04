@@ -7,7 +7,7 @@ exports.acceptFriendRequest = [
   // Verify token exists - if so, pull and save user id in res.locals.userId for next middleware.
   middleware.verifyTokenAndStoreCredentials,
   // Needs to first remove the pending request from the current user, and the "sent" request from the original user as well.
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const friendshipId = v4();
 
@@ -77,44 +77,73 @@ exports.acceptFriendRequest = [
           },
         });
 
-      return res.json({ message: "Friend request accepted!", user });
+      // Save up to date user and move on.
+      res.locals.user = user;
+      next();
     } catch (error) {
       console.log(error);
       return res.status(400).json({ message: "Error", error });
     }
+  },
+  // Handle emits for our messenger application, in case anyone is connected.
+  (req, res) => {
+    // Emit to our messenger app if users are connected.
+    req.app.get("socketio").emit("friend activity");
+
+    // End response with up to date user.
+    return res.json({
+      message: "Friend request accepted!",
+      user: res.locals.user,
+    });
   },
 ];
 
 exports.requestFriend = [
   // Verify token exists - if so, pull and save for next middleware.
   middleware.verifyTokenAndStoreCredentials,
+  // Verify username provided belongs to a valid user, if so, save that person and move on.
+  async (req, res, next) => {
+    try {
+      const friend = await User.findOne({ username: req.params.username });
+      if (!friend) {
+        return res.status(400).json({ message: "User does not exist!" });
+      }
+      res.locals.friend = friend;
+      next();
+    } catch (error) {
+      return res.status(400).json({ message: "Error searching for friend!" });
+    }
+  },
   // Check to see if this is a valid request.
   async (req, res, next) => {
     try {
-      await User.findById(req.params.id);
       const user = await User.findById(res.locals.userId);
 
       // Verify requested friend is not already a friend
-      if (isAlreadyFriend(user, req.params.id)) {
-        return res.status(400).json({ msg: "User is already a friend" });
+      if (isAlreadyFriend(user, res.locals.friend._id)) {
+        return res.status(400).json({ message: "User is already a friend" });
       }
       // Check to see if there exists a pending request already
-      if (pendingRequestExists(user, req.params.id)) {
-        return res.status(400).json({ msg: "Pending requests already exists" });
+      if (pendingRequestExists(user, res.locals.friend._id)) {
+        return res
+          .status(400)
+          .json({ message: "Pending requests already exists" });
       }
       next();
     } catch (error) {
       console.log(error);
-      return res.status(400).json({ message: "User does not exist", error });
+      return res
+        .status(400)
+        .json({ message: "Error validating request", error });
     }
   },
   // Request is valid - so process friend request.
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       // Update user to reflect sent request
       const user = await User.findOneAndUpdate(
         { _id: res.locals.userId },
-        { $push: { sentFriendRequests: { _id: req.params.id } } },
+        { $push: { sentFriendRequests: { _id: res.locals.friend._id } } },
         { new: true }
       )
         .select(
@@ -146,14 +175,23 @@ exports.requestFriend = [
         });
       // Update friend to reflect received request
       await User.findOneAndUpdate(
-        { _id: req.params.id },
+        { _id: res.locals.friend._id },
         { $push: { receivedFriendRequests: { _id: res.locals.userId } } }
       );
 
-      return res.json({ message: "Friend request sent", user });
+      // Save up to date user and move on.
+      res.locals.user = user;
+      next();
     } catch (error) {
       console.log(error);
       return res.json({ message: "Error processing request" });
     }
+  },
+  // Handle emits for our messenger application, in case anyone is connected.
+  (req, res) => {
+    // Emit to our messenger app if users are connected.
+    req.app.get("socketio").emit("friend activity");
+    // End response with up to date user information.
+    return res.json({ message: "Friend request sent", user: res.locals.user });
   },
 ];

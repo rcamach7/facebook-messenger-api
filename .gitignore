@@ -1,8 +1,8 @@
 /node_modules
 /crud.http
-/data/users.json
 
 # Files not needed
 .vscode
 .env
 .DS_Store
+/assets/admin.json

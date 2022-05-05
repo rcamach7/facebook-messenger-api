@@ -1,0 +1,38 @@
+[
+  {
+    "username": "theRealElon",
+    "password": "admin",
+    "fullName": "Elon Musk",
+    "post": {
+      "description": "We just landed on the moon! Uploading pictures in a minute!",
+      "imageName": "test2.png"
+    }
+  },
+  {
+    "username": "ronaldo7",
+    "password": "admin",
+    "fullName": "Cristiano Ronaldo",
+    "post": {
+      "description": "Can't believe this harry macquire guy!",
+      "imageName": null
+    }
+  },
+  {
+    "username": "aristotle",
+    "password": "admin",
+    "fullName": "Greek Aristoteles",
+    "post": {
+      "description": "I found the answer to life!",
+      "imageName": "test1.png"
+    }
+  },
+  {
+    "username": "benzema9",
+    "password": "admin",
+    "fullName": "Karim Benzema",
+    "post": {
+      "description": "Manchester City will get destroyed in MADRID!",
+      "imageName": null
+    }
+  }
+]

@@ -33,3 +33,5 @@ App would need the following environment variables to run successfully:
 - MONGO_DB, SECRET_STRING, CLOUDINARY_API, CLOUDINARY_CLOUD, CLOUDINARY_SECRET
 
 #### Pending Improvements
+
+- Add new function for populating database, adding custom profile pictures to each new user created.

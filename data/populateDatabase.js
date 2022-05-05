@@ -105,10 +105,49 @@ const updateProfilePictures = async () => {
   }
 };
 
+// Does not yet deal with users potentially commenting on their own posts.
+// Only generates one comment per post.
+const addRandomComments = async () => {
+  // Use first users token to get access to all posts
+  const {
+    data: { posts },
+  } = await axios({
+    method: "get",
+    url: `${config.apiUrl}/posts/`,
+    headers: { authorization: `bearer ${usersData[0].token}` },
+  });
+  const randomComments = [
+    "Wo that's awesome",
+    "Hey people",
+    "Very funny",
+    "Haven't heard from you in a while!",
+    "Hello World",
+  ];
+
+  for (let i = 0; i < posts.length; i++) {
+    const myComment =
+      randomComments[Math.floor(Math.random() * randomComments.length)];
+    const randomUserToken =
+      usersData[Math.floor(Math.random() * usersData.length)].token;
+
+    try {
+      await axios.put(
+        `${config.apiUrl}/posts/${posts[i]._id}`,
+        { comment: myComment },
+        { headers: { authorization: `Bearer ${randomUserToken}` } }
+      );
+    } catch (error) {
+      console.log("error generating random comment");
+    }
+    console.log("done generating a comment for one post");
+  }
+};
+
 const run = async () => {
   await generateUsers();
   await createPosts();
   await updateProfilePictures();
+  await addRandomComments();
 };
 
 run();

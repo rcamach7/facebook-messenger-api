@@ -5,8 +5,9 @@ router.post("/", userController.createUser);
 
 router.get("/", userController.getUser);
 
-// To be implemented in the future.
 router.put("/", userController.updateUser);
+
+// To be implemented in the future.
 router.delete("/", userController.deleteUser);
 
 module.exports = router;

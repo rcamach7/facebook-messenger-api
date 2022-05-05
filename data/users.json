@@ -3,7 +3,7 @@
     "username": "ronaldo7",
     "password": "admin",
     "fullName": "Cristiano Ronaldo",
-    "profileImage": "./images/ronaldo.png",
+    "profilePicture": "./images/ronaldo.png",
     "post": {
       "description": "siuuuuuuuuuuuuu!",
       "imageName": "./images/celebration.gif"
@@ -13,7 +13,7 @@
     "username": "fooBar",
     "password": "test",
     "fullName": "Foo Bar",
-    "profileImage": "./images/fooBar.png",
+    "profilePicture": "./images/fooBar.png",
     "post": {
       "description": "6 hours of debugging can save you 5 minutes of reading documentation!",
       "imageName": null
@@ -23,7 +23,7 @@
     "username": "theRealElon",
     "password": "admin",
     "fullName": "Elon Musk",
-    "profileImage": "./images/elon.png",
+    "profilePicture": "./images/elon.png",
     "post": {
       "description": "on our way to mars! how cool?",
       "imageName": "./images/space.jpeg"
@@ -33,7 +33,7 @@
     "username": "odin",
     "password": "admin",
     "fullName": "Odin Project",
-    "profileImage": "./images/odin.png",
+    "profilePicture": "./images/odin.png",
     "post": {
       "description": "comment down below if you come from the Odin project!",
       "imageName": null

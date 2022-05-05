@@ -6,3 +6,6 @@
 .env
 .DS_Store
 /assets/admin.json
+
+# Populated users data
+/data/images

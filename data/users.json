@@ -1,37 +1,41 @@
 [
   {
-    "username": "theRealElon",
-    "password": "admin",
-    "fullName": "Elon Musk",
-    "post": {
-      "description": "We just landed on the moon! Uploading pictures in a minute!",
-      "imageName": "test2.png"
-    }
-  },
-  {
     "username": "ronaldo7",
     "password": "admin",
     "fullName": "Cristiano Ronaldo",
+    "profileImage": "./images/ronaldo.png",
     "post": {
-      "description": "Can't believe this harry macquire guy!",
+      "description": "siuuuuuuuuuuuuu!",
+      "imageName": "./images/celebration.gif"
+    }
+  },
+  {
+    "username": "fooBar",
+    "password": "test",
+    "fullName": "Foo Bar",
+    "profileImage": "./images/fooBar.png",
+    "post": {
+      "description": "6 hours of debugging can save you 5 minutes of reading documentation!",
       "imageName": null
     }
   },
   {
-    "username": "aristotle",
+    "username": "theRealElon",
     "password": "admin",
-    "fullName": "Greek Aristoteles",
+    "fullName": "Elon Musk",
+    "profileImage": "./images/elon.png",
     "post": {
-      "description": "I found the answer to life!",
-      "imageName": "test1.png"
+      "description": "on our way to mars! how cool?",
+      "imageName": "./images/space.jpeg"
     }
   },
   {
-    "username": "benzema9",
+    "username": "odin",
     "password": "admin",
-    "fullName": "Karim Benzema",
+    "fullName": "Odin Project",
+    "profileImage": "./images/odin.png",
     "post": {
-      "description": "Manchester City will get destroyed in MADRID!",
+      "description": "comment down below if you come from the Odin project!",
       "imageName": null
     }
   }

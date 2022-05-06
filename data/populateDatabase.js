@@ -6,7 +6,7 @@ const fs = require("fs").promises;
 
 // Delay used to separate post creation times.
 function sleep() {
-  return new Promise((resolve) => setTimeout(resolve, 13));
+  return new Promise((resolve) => setTimeout(resolve, 300000));
 }
 const usersData = [...users];
 const generateUsers = async () => {
@@ -72,7 +72,11 @@ const createPosts = async () => {
 
     console.log(`finished making a posting under ${usersData[i].fullName}`);
     // Spread posts by delaying next iteration.
-    await sleep();
+    if (i + 1 === usersData.length) {
+      continue;
+    } else {
+      await sleep();
+    }
   }
 };
 
@@ -105,8 +109,6 @@ const updateProfilePictures = async () => {
   }
 };
 
-// Does not yet deal with users potentially commenting on their own posts.
-// Only generates one comment per post.
 const addRandomComments = async () => {
   // Use first users token to get access to all posts
   const {
@@ -118,28 +120,50 @@ const addRandomComments = async () => {
   });
   const randomComments = [
     "Wo that's awesome",
-    "Hey people",
+    "Hey there!",
+    "You're a smart cookie",
     "Very funny",
     "Haven't heard from you in a while!",
-    "Hello World",
+    "You've got all the right moves",
+    "Woo!",
+    "Nice!",
+    "You always know — and say — exactly what I need to hear when I need to hear it.",
+    "What a post!",
+    "Sweet",
+    "Your perspective is refreshing",
+    "Interesting...",
+    "Wait I don't understand...",
+    "Lets go!",
+    "Brilliant!",
+    "Very funny!",
   ];
 
-  for (let i = 0; i < posts.length; i++) {
-    const myComment =
-      randomComments[Math.floor(Math.random() * randomComments.length)];
-    const randomUserToken =
-      usersData[Math.floor(Math.random() * usersData.length)].token;
+  for (let i = 1; i < posts.length; i++) {
+    // Generate two random comments per post.
+    for (let j = 0; j < 3; j++) {
+      // Make sure we aren't commenting on our own post.
+      let randomUsersIndex = Math.floor(Math.random() * usersData.length);
+      while (
+        posts[i].postedBy.fullName === usersData[randomUsersIndex].fullName
+      ) {
+        randomUsersIndex = Math.floor(Math.random() * usersData.length);
+      }
 
-    try {
-      await axios.put(
-        `${config.apiUrl}/posts/${posts[i]._id}`,
-        { comment: myComment },
-        { headers: { authorization: `Bearer ${randomUserToken}` } }
-      );
-    } catch (error) {
-      console.log("error generating random comment");
+      let randomUserToken = usersData[randomUsersIndex].token;
+      const myComment =
+        randomComments[Math.floor(Math.random() * randomComments.length)];
+      try {
+        await axios.put(
+          `${config.apiUrl}/posts/${posts[i]._id}`,
+          { comment: myComment },
+          { headers: { authorization: `Bearer ${randomUserToken}` } }
+        );
+      } catch (error) {
+        console.log(error.response);
+        console.log("error generating random comment");
+      }
     }
-    console.log("done generating a comment for one post");
+    console.log("done generating two comments for one post");
   }
 };
 

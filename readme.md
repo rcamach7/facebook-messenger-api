@@ -1,4 +1,4 @@
-# Facebook Clone + Instant Messenger API
+# Social Media API
 
 A RESTful API that serves both of my keystone web applications:
 
@@ -33,8 +33,8 @@ A RESTful API that serves both of my keystone web applications:
 #### Local Installation & Running
 
 ```bash
-git clone https://github.com/rcamach7/facebook-messenger-api
-cd facebook-messenger-api
+git clone https://github.com/rcamach7/social-media-api
+cd social-media-api
 npm install
 npm run serverstart
 ```

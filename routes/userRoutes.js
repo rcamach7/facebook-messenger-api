@@ -5,6 +5,8 @@ router.post("/", userController.createUser);
 
 router.get("/", userController.getUser);
 
+router.get("/visit/:username", userController.getVisitingUser);
+
 router.put("/", userController.updateUser);
 
 // To be implemented in the future.

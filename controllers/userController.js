@@ -166,6 +166,22 @@ exports.getUser = [
   },
 ];
 
+exports.getVisitingUser = [
+  // Verify token exists - if so, pull and save user id in res.locals.userId for next middleware.
+  middleware.verifyTokenAndStoreCredentials,
+  async (req, res) => {
+    try {
+      const user = await User.find({ username: req.params.username }).select(
+        "username fullName profilePicture"
+      );
+
+      return res.json({ user });
+    } catch (errors) {
+      return res.status(404).json({ message: "User does not exist", errors });
+    }
+  },
+];
+
 // Allows user to update their fullName, or profilePicture
 exports.updateUser = [
   // Verify token exists - if so, pull and save user id in res.locals.userId for next middleware.

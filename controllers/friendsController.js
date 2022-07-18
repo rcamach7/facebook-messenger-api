@@ -49,9 +49,8 @@ exports.acceptFriendRequest = [
         },
         { new: true }
       )
-        .select(
-          "username fullName profilePicture friends receivedFriendRequests sentFriendRequests"
-        )
+        // Selects all user fields - excluding password.
+        .select("-password")
         .populate({
           path: "friends",
           populate: {
@@ -131,7 +130,6 @@ exports.requestFriend = [
       }
       next();
     } catch (error) {
-      console.log(error);
       return res
         .status(400)
         .json({ message: "Error validating request", error });
@@ -146,9 +144,7 @@ exports.requestFriend = [
         { $push: { sentFriendRequests: { _id: res.locals.friend._id } } },
         { new: true }
       )
-        .select(
-          "username fullName profilePicture friends receivedFriendRequests sentFriendRequests"
-        )
+        .select("-password")
         .populate({
           path: "friends",
           populate: {
@@ -173,13 +169,14 @@ exports.requestFriend = [
             select: ["username", "fullName", "profilePicture"],
           },
         });
+
       // Update friend to reflect received request
       await User.findOneAndUpdate(
         { _id: res.locals.friend._id },
         { $push: { receivedFriendRequests: { _id: res.locals.userId } } }
       );
 
-      // Save up to date user and move on.
+      // Save newly updated user.
       res.locals.user = user;
       next();
     } catch (error) {

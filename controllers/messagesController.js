@@ -6,6 +6,7 @@ exports.sendMessage = [
   middleware.verifyTokenAndStoreCredentials,
   async (req, res, next) => {
     try {
+      // Create new message
       const message = {
         from: res.locals.userId,
         to: req.params.id,

@@ -10,7 +10,7 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-// Configure Cloudinary and set some settings.
+// Configure Cloudinary to manage storing new user images.
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD,
   api_key: process.env.CLOUDINARY_API,
@@ -53,7 +53,9 @@ exports.createUser = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json(errors);
+      return res
+        .status(400)
+        .json({ message: "Filed data validation for new user fields", errors });
     }
     // If no errors, move on to step.
     next();
@@ -129,9 +131,7 @@ exports.getUser = [
   async (req, res) => {
     try {
       const user = await User.findById(res.locals.userId)
-        .select(
-          "username fullName profilePicture friends receivedFriendRequests sentFriendRequests"
-        )
+        .select("-password")
         .populate({
           path: "friends",
           populate: {
@@ -210,9 +210,7 @@ exports.updateUser = [
           new: true,
         }
       )
-        .select(
-          "username fullName profilePicture friends receivedFriendRequests sentFriendRequests"
-        )
+        .select("-password")
         .populate({
           path: "friends",
           populate: {

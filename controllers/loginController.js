@@ -19,7 +19,9 @@ exports.login = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors });
+      return res
+        .status(400)
+        .json({ message: "Failed data validation", errors });
     }
     // If no errors, move on to step.
     next();
@@ -33,6 +35,6 @@ exports.login = [
       process.env.SECRET_STRING
     );
     // Send user token.
-    res.json({ token });
+    res.json({ message: "Successfully validated", token });
   },
 ];

@@ -5,7 +5,7 @@ const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const { check, validationResult } = require("express-validator");
 
-// Configure Cloudinary and set some settings.
+// Configure Cloudinary to process images uploaded by user.
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD,
   api_key: process.env.CLOUDINARY_API,
@@ -49,6 +49,8 @@ exports.getPosts = [
 ];
 
 exports.createPost = [
+  // Verify token exists - if so, pull and save user id in res.locals.userId for next middleware.
+  middleware.verifyTokenAndStoreCredentials,
   // Will upload an image if present - and make the body provided accessible.
   upload.single("picture"),
   check("description")
@@ -59,13 +61,13 @@ exports.createPost = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json(errors);
+      return res
+        .status(400)
+        .json({ message: "Failed post validation", errors });
     }
     // If no errors, move on to step.
     next();
   },
-  // Verify token exists - if so, pull and save user id in res.locals.userId for next middleware.
-  middleware.verifyTokenAndStoreCredentials,
   async (req, res) => {
     try {
       const newPost = new Post({
@@ -101,7 +103,7 @@ exports.editPost = [
   // Verify token exists - if so, pull and save user id in res.locals.userId for next middleware.
   middleware.verifyTokenAndStoreCredentials,
   /**
-   * Process "add like to a post". For this request to be valid, these body fields must exists:
+   * Process action of toggling a like to a post. For this request to be valid, these body fields must exists:
    * postLike must be truthly.
    */
   async (req, res, next) => {
@@ -172,7 +174,7 @@ exports.editPost = [
     }
   },
   /**
-   * Process "add like to a comment". For this request to be valid, these body fields must exists:
+   * Process action of toggling a like to a comment. For this request to be valid, the following fields must be provided:
    * commentLike must be truthly.
    * commentId must be provided.
    */
@@ -265,16 +267,11 @@ exports.editPost = [
     }
   },
   /**
-   * Process "add comment to post". For this request to be valid, these body fields must exists:
+   * Process action of adding a comment to a post. For this request to be valid, these body fields must exists:
    * comment must be provided
    */
   async (req, res) => {
-    if (!req.body.comment) {
-      // End request since user didn't send a valid field to update.
-      return res
-        .status(400)
-        .json({ message: "Please provide a field to update" });
-    } else {
+    if (req.body.comment) {
       try {
         const post = await Post.findOneAndUpdate(
           { _id: req.params.id },
@@ -313,6 +310,11 @@ exports.editPost = [
           .status(500)
           .json({ message: "Error adding comment to post" });
       }
+    } else {
+      // End request since user didn't send a valid field to update.
+      return res
+        .status(400)
+        .json({ message: "Please provide a field to update" });
     }
   },
 ];

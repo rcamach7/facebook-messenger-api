@@ -44,5 +44,3 @@ App would need the following environment variables provided to run successfully:
 - MONGO_DB, SECRET_STRING, CLOUDINARY_API, CLOUDINARY_CLOUD, CLOUDINARY_SECRET
 
 #### Pending Improvements
-
-- Separate messages into its own schema model.

@@ -69,7 +69,7 @@ app.use("/friends", friendsRoutes);
 app.use("/login", loginRoute);
 
 app.get("/", (req, res, next) => {
-  res.json({ msg: "hello world" });
+  res.json({ msg: "Welcome to Ricardo's Social Media API" });
 });
 
 module.exports = app;

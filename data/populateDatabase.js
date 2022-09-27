@@ -1,8 +1,8 @@
-const config = require("../config.json");
 const axios = require("axios");
 const users = require("./users.json");
 const FormData = require("form-data");
 const fs = require("fs").promises;
+require("dotenv").config();
 
 // Delay used to separate post creation times.
 function sleep() {
@@ -14,7 +14,7 @@ const generateUsers = async () => {
     try {
       const {
         data: { token },
-      } = await axios.post(`${config.apiUrl}/users/`, {
+      } = await axios.post(`${process.env.API_SERVER_URL}/users/`, {
         username: usersData[i].username,
         password: usersData[i].password,
         fullName: usersData[i].fullName,
@@ -45,7 +45,7 @@ const createPosts = async () => {
 
         await axios({
           method: "post",
-          url: `${config.apiUrl}/posts/`,
+          url: `${process.env.API_SERVER_URL}/posts/`,
           data: formData,
           headers: {
             "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
@@ -59,7 +59,7 @@ const createPosts = async () => {
       // Handle regular text post
       try {
         await axios.post(
-          `${config.apiUrl}/posts/`,
+          `${process.env.API_SERVER_URL}/posts/`,
           {
             description: usersData[i].post.description,
           },
@@ -95,7 +95,7 @@ const updateProfilePictures = async () => {
 
       await axios({
         method: "put",
-        url: `${config.apiUrl}/users/`,
+        url: `${process.env.API_SERVER_URL.apiUrl}/users/`,
         data: formData,
         headers: {
           "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
@@ -115,27 +115,47 @@ const addRandomComments = async () => {
     data: { posts },
   } = await axios({
     method: "get",
-    url: `${config.apiUrl}/posts/`,
+    url: `${process.env.API_SERVER_URL}/posts/`,
     headers: { authorization: `bearer ${usersData[0].token}` },
   });
   const randomComments = [
-    "Wo that's awesome",
-    "Hey there!",
-    "You're a smart cookie",
-    "Very funny",
-    "Haven't heard from you in a while!",
-    "You've got all the right moves",
-    "Woo!",
-    "Nice!",
+    "You’re a smart cookie.",
+    "You’re an awesome friend.",
+    "You light up the room.",
+    "You deserve a hug right now.",
+    "You should be proud of yourself.",
+    "You’re more helpful than you realize.",
+    "You have a great sense of humor.",
+    "You’ve got all the right moves!",
+    "Is that your picture next to “charming” in the dictionary?",
+    "Your kindness is a balm to all who encounter it.",
+    "You’re all that and a super-size bag of chips.",
+    "On a scale from 1 to 10, you’re an 11.",
+    "You are brave.",
+    "You’re even more beautiful on the inside than you are on the outside.",
+    "You have the courage of your convictions.",
+    "Your eyes are breathtaking.",
+    "If cartoon bluebirds were real, a bunch of them would be sitting on your shoulders singing right now.",
+    "You are making a difference.",
+    "You’re like sunshine on a rainy day.",
+    "You bring out the best in other people.",
+    "Your ability to recall random factoids at just the right time is impressive.",
+    "You’re a great listener.",
+    "How is it that you always look great, even in sweatpants?",
+    "Everything would be better if more people were like you!",
+    "I bet you sweat glitter.",
+    "You were cool way before hipsters were cool.",
+    "That color is perfect on you.",
+    "Hanging out with you is always a blast.",
     "You always know — and say — exactly what I need to hear when I need to hear it.",
-    "What a post!",
-    "Sweet",
-    "Your perspective is refreshing",
-    "Interesting...",
-    "Wait I don't understand...",
-    "Lets go!",
-    "Brilliant!",
-    "Very funny!",
+    "You smell really good.",
+    "You may dance like no one’s watching, but everyone’s watching because you’re an amazing dancer!",
+    "Being around you makes everything better!",
+    "When you say, “I meant to do that,” I totally believe you.",
+    "When you’re not afraid to be yourself is when you’re most incredible.",
+    "Colors seem brighter when you’re around.",
+    "You’re more fun than a ball pit filled with candy. (And seriously, what could be more fun than that?)",
+    "That thing you don’t like about yourself is what makes you so interesting.",
   ];
 
   for (let i = 1; i < posts.length; i++) {
@@ -154,7 +174,7 @@ const addRandomComments = async () => {
         randomComments[Math.floor(Math.random() * randomComments.length)];
       try {
         await axios.put(
-          `${config.apiUrl}/posts/${posts[i]._id}`,
+          `${process.env.API_SERVER_URL}/posts/${posts[i]._id}`,
           { comment: myComment },
           { headers: { authorization: `Bearer ${randomUserToken}` } }
         );

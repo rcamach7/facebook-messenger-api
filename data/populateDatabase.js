@@ -8,7 +8,29 @@ require("dotenv").config();
 function sleep() {
   return new Promise((resolve) => setTimeout(resolve, 300000));
 }
+
 const usersData = [...users];
+
+/**
+ * This function can be ran to perform specific tasks on users that already exist, by obtaining their token.
+ */
+const obtainUserTokens = async () => {
+  for (let i = 0; i < usersData.length; i++) {
+    try {
+      const {
+        data: { token },
+      } = await axios.post(`${process.env.API_SERVER_URL}/login/`, {
+        username: usersData[i].username,
+        password: usersData[i].password,
+      });
+      usersData[i]["token"] = token;
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(`User ${usersData[i].fullName} logged in, and token saved`);
+  }
+};
+
 const generateUsers = async () => {
   for (let i = 0; i < usersData.length; i++) {
     try {
@@ -95,7 +117,7 @@ const updateProfilePictures = async () => {
 
       await axios({
         method: "put",
-        url: `${process.env.API_SERVER_URL.apiUrl}/users/`,
+        url: `${process.env.API_SERVER_URL}/users/`,
         data: formData,
         headers: {
           "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
@@ -103,6 +125,7 @@ const updateProfilePictures = async () => {
         },
       });
     } catch (error) {
+      console.log(error);
       console.log("error changing user image");
     }
     console.log(`profile picture updated for ${usersData[i].fullName}`);
@@ -188,6 +211,12 @@ const addRandomComments = async () => {
 };
 
 const run = async () => {
+  /**
+   * 1. Create users
+   * 2. Create posts
+   * 3. Update profile pictures
+   * 4. Add random comments
+   */
   await generateUsers();
   await createPosts();
   await updateProfilePictures();
